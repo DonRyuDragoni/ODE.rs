@@ -2,5 +2,9 @@
 name = "ode"
 version = "0.1.0"
 authors = ["DonRyuDragoni <dragoni.ryu@gmail.com>"]
+description = "Various solvers for ODEs"
+repository = "https://github.com/DonRyuDragoni/ODE.rs"
+readme = "README.md"
+license = "MIT"
 
 [dependencies]
