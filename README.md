@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/DonRyuDragoni/ODE.rs.svg?branch=master)](https://travis-ci.org/DonRyuDragoni/ODE.rs)
 [![Published Version](https://img.shields.io/crates/v/ode.svg)](https://crates.io/crates/ode)
+[![Documentation](https://docs.rs/ode/badge.svg)](https://docs.rs/ode/)
 
 Provide MATLAB-ish solvers for ODEs using different methods. Also, allow the
 user to choose which datatype (s)he desires to use for that problem.
