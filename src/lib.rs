@@ -8,6 +8,17 @@ pub enum Method {
 }
 
 /**
+Basic requirements for a type to use the solver.
+*/
+pub trait Number<T> : Add<Output = T> + Clone + From<u8> + From<f32> {}
+
+/**
+Anything that implements the required traits already implements Number.
+*/
+impl<T> Number<T> for T
+    where T: Add<Output = T> + Clone + From<u8> + From<f32> {}
+
+/**
 ```
 use ode::{Method, Solver};
 
@@ -25,7 +36,7 @@ let (times, pos) = s.run();
 ```
 */
 pub struct Solver<T, F>
-    where T: From<f32>,
+    where T: Number<T>,
           F: Fn(&T, &Vec<T>) -> Vec<T> {
     method: Method,
     weights: Vec<T>,
@@ -36,7 +47,7 @@ pub struct Solver<T, F>
 }
 
 impl<T, F> Solver<T, F>
-    where T: Add<Output = T> + Clone + From<u8> + From<f32>,
+    where T: Number<T>,
           F: Fn(&T, &Vec<T>) -> Vec<T> {
 
     pub fn new(initial_conditions: Vec<T>, function: F) -> Solver<T, F> {
