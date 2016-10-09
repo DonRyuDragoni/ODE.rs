@@ -1,22 +1,12 @@
-pub mod rk4;
+mod rk4;
+mod traits;
 
-use std::ops::Add;
+pub use traits::*; // re-expor the traits
 
 pub enum Method {
     RK2,
     RK4,
 }
-
-/**
-Basic requirements for a type to use the solver.
-*/
-pub trait Number<T> : Add<Output = T> + Clone + From<u8> + From<f32> {}
-
-/**
-Anything that implements the required traits already implements Number.
-*/
-impl<T> Number<T> for T
-    where T: Add<Output = T> + Clone + From<u8> + From<f32> {}
 
 /**
 ```
@@ -25,12 +15,12 @@ use ode::{Method, Solver};
 let ini_cond: Vec<f32> = vec![1., 2.];
 
 // simple config
-Solver::new(ini_cond.clone(), |t: &f32, _: &Vec<f32>| vec![2.*t] )
+Solver::new(&ini_cond, |t: &f32, _: &Vec<f32>| vec![2.*t] )
     .method(Method::RK4)
     .run();
 
 // complex config
-let mut s = Solver::new(ini_cond, |t: &f32, _: &Vec<f32>| vec![2.*t] );
+let mut s = Solver::new(&ini_cond, |t: &f32, _: &Vec<f32>| vec![2.*t] );
 s.method(Method::RK4);
 let (times, pos) = s.run();
 ```
@@ -50,14 +40,15 @@ impl<T, F> Solver<T, F>
     where T: Number<T>,
           F: Fn(&T, &Vec<T>) -> Vec<T> {
 
-    pub fn new(initial_conditions: Vec<T>, function: F) -> Solver<T, F> {
+    pub fn new(initial_conditions: &Vec<T>, function: F) -> Solver<T, F> {
         Solver {
-            method: Method::RK4,
-            weights: vec![T::from(1), T::from(2), T::from(2), T::from(1)],
-            weight_sum: T::from(6),
-            step: T::from(10e-3),
-            initial_conditions: initial_conditions,
-            function: function,
+            method:             Method::RK4,
+            weights:            vec![T::from(1), T::from(2),
+                                     T::from(2), T::from(1)],
+            weight_sum:         T::from(6),
+            step:               T::from(10e-3),
+            initial_conditions: initial_conditions.clone(),
+            function:           function,
         }
     }
 
@@ -88,8 +79,8 @@ impl<T, F> Solver<T, F>
     Modify the default weighting applyed to each intermidiate point. Notice
     that, when changing
     */
-    pub fn change_weight(&mut self, new_weights: Vec<T>) -> &mut Solver<T, F> {
-        self.weights = new_weights;
+    pub fn change_weight(&mut self, new_weights: &Vec<T>) -> &mut Solver<T, F> {
+        self.weights = new_weights.clone();
         self
     }
 
@@ -121,8 +112,9 @@ mod tests {
     use super::*;
     #[test]
     fn it_works() {
-        let _ = rk4::solver(|t: &f32, _: &Vec<f32>| -> Vec<f32> {
-            vec![2.*t]
-        }, vec![0.], &[0., 0.], 1.0);
+        let _ = Solver::new(&vec![0., 0.],
+                            |t: &f32, _: &Vec<f32>| -> Vec<f32> {
+                                vec![2.*t]
+                            });
     }
 }
