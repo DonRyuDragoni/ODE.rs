@@ -1,5 +1,7 @@
 mod traits;
 mod solver;
 
-pub use traits::*; // re-export the traits
+// re-exports
+
+pub use traits::*;
 pub use solver::*;
