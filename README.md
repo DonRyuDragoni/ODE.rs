@@ -4,15 +4,65 @@
 [![Published Version](https://img.shields.io/crates/v/ode.svg)](https://crates.io/crates/ode)
 [![Documentation](https://docs.rs/ode/badge.svg)](https://docs.rs/ode/)
 
-Provide MATLAB-ish solvers for ODEs using different methods. Also, allow the
-user to choose which datatype (s)he desires to use for that problem.
+Provide generic solvers for ODEs using different methods. Also, allow the user
+to choose which datatype they desire to use for that problem, be it `f32`, `u8`
+or some non-standard bignum type..
 
 By no means this is yet ready for any serious use right now. The code needs to
 be cleaned and there is a lot yet to be implemented.
 
-## TODOs
+## Example
 
-- [ ] implement solver for rk2, rk3 and rk5
-- [ ] custom weights for each implementation (e.g.: rk4 defaults to 1-2-2-1, but
-  the user may whant 1-3-3-1 for some reason)
-- [ ] provide default values for said weights and for the step
+```rust
+use ode::{Method, Solver};
+
+let ini_cond: Vec<f32> = vec![1., 2.];
+
+// simple config
+Solver::new(&ini_cond, |t: &f32, _: &Vec<f32>| vec![2.*t])
+    .method(Method::RK4)
+    .run();
+
+// complex config
+let mut s = Solver::new(&ini_cond, |t: &f32, _: &Vec<f32>| vec![2.*t] );
+s.method(Method::RK4);
+
+// run the solver
+let (times, pos) = s.run();
+```
+
+## Current Goals
+
+For the next minor version, 0.2.0, we plan to:
+
+- [ ] implement the 4th order Runge-Kutta method;
+- [ ] have at least a few tests and examples;
+- [ ] stabilize the API.
+
+For the next major version, 1.0.0, we plan to:
+
+- [ ] figure out a generic way to write all Runge-Kutta variants that is both
+  easy to maintain and clean to read;
+- [ ] implement all planned Runge-Kutta variants:
+  - [ ] 2;
+  - [ ] 3;
+  - [ ] 4;
+  - [ ] 5.
+
+## Release Notes
+
+- 0.1.1 [**unusable**]: break change
+
+    Closing issue #1, this drops the MATLAB-ish style in favor of a more Rustic
+    way of doing things. This also starts the process of building version 0.2.0,
+    attempting to stabilize the API.
+
+    This is not a usable version, as `solver::Solver::run()` will always return
+    empty vectors.
+
+- 0.1.0: first draft
+
+    Started the project as an attempt to bring MATLAB-ish ODE solvers to
+    Rust. The API is completelly unstable and may change at any time.
+
+    Only the RK4 method is available, with a very basic usage.

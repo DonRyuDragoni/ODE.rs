@@ -12,13 +12,15 @@ use ode::{Method, Solver};
 let ini_cond: Vec<f32> = vec![1., 2.];
 
 // simple config
-Solver::new(&ini_cond, |t: &f32, _: &Vec<f32>| vec![2.*t] )
+Solver::new(&ini_cond, |t: &f32, _: &Vec<f32>| vec![2.*t])
     .method(Method::RK4)
     .run();
 
 // complex config
 let mut s = Solver::new(&ini_cond, |t: &f32, _: &Vec<f32>| vec![2.*t] );
 s.method(Method::RK4);
+
+// run the solver
 let (times, pos) = s.run();
 ```
 */
@@ -37,6 +39,9 @@ impl<T, F> Solver<T, F>
     where T: Number<T>,
           F: Fn(&T, &Vec<T>) -> Vec<T> {
 
+    /**
+    Start building a new Solver.
+    */
     pub fn new(initial_conditions: &Vec<T>, function: F) -> Solver<T, F> {
         Solver {
             method:             Method::RK4,
@@ -51,13 +56,14 @@ impl<T, F> Solver<T, F>
 
     /**
     Select the desired algorithm to solve the givem problem, also changing the
-    default weights (see `change_weight()` for more details) applyed in each
-    case; default values are:
+    weights based on the selected case:
 
     - `Method::RK2`: `vec![T::from(1), T::from(1)],`
     - `Method::RK4`: `vec![T::from(1), T::from(2), T::from(2), T::from(1)],`
 
     Defaults to `Method::RK4`.
+
+    To manually alter these values, please check `Self::change_weight()`.
     */
     pub fn method(&mut self, new_method: Method) -> &mut Solver<T, F> {
         match new_method {
@@ -73,32 +79,49 @@ impl<T, F> Solver<T, F>
     }
 
     /**
-    Modify the default weighting applyed to each intermidiate point. Notice
-    that, when changing
+    Modify the default weighting applyed to each intermidiate point.
     */
-    pub fn change_weight(&mut self, new_weights: &Vec<T>) -> &mut Solver<T, F> {
+    pub fn change_weight(&mut self, new_weights: Vec<T>) -> &mut Solver<T, F> {
         self.weights = new_weights.clone();
+
+        let mut sum: T = T::from(0);
+        for i in new_weights.iter() {
+            sum = sum + i.clone();
+        }
+
         self
     }
 
     /**
-    Validates the data passed to the solver. This is tipically called by `run()`
-    before attempting to solve the passed function.
+    Validates the data passed to the solver.
+
+    This is tipically called by `run()` before attempting to solve the passed
+    function, but was made public so the data can be verified and corrected
+    without a panic.
+
+    Data checks are:
+
+    - `Self::weights.len()` should match the selected method:
+
+        - `Method::RK2` requires 2 weights;
+        - `Method::RK4` requires 4 weights;
     */
-    pub fn validate(&self) {
-        // make sure the weights match with the method
-        assert_eq!(self.weights.len(),
-                   match self.method {
-                       Method::RK2 => 2,
-                       Method::RK4 => 4,
-                   });
+    pub fn validate(&self) -> bool {
+        self.weights.len() == match self.method {
+            Method::RK2 => 2,
+            Method::RK4 => 4,
+        }
     }
 
     /**
     Check and run the solver, returning the results of the calculation.
+
+    Notice that, before the solver actually runs, it validates its data by
+    calling `Self::validate()` within an `assert!`. See that function for more
+    details.
     */
     pub fn run(&self) -> (Vec<T>, Vec<Vec<T>>) {
-        self.validate();
+        assert!(self.validate());
 
         (Vec::new(), Vec::new())
     }
