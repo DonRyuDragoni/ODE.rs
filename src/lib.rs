@@ -1,3 +1,5 @@
+extern crate num_traits;
+
 mod traits;
 mod solver;
 

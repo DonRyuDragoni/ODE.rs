@@ -25,7 +25,7 @@ let (times, pos) = s.run();
 ```
 */
 pub struct Solver<T, F>
-    where T: Number<T>,
+    where T: Number,
           F: Fn(&T, &Vec<T>) -> Vec<T> {
     method: Method,
     weights: Vec<T>,
@@ -36,31 +36,16 @@ pub struct Solver<T, F>
 }
 
 impl<T, F> Solver<T, F>
-    where T: Number<T>,
+    where T: Number,
           F: Fn(&T, &Vec<T>) -> Vec<T> {
-
-    /**
-    Start building a new Solver.
-    */
-    pub fn new(initial_conditions: &Vec<T>, function: F) -> Solver<T, F> {
-        Solver {
-            method:             Method::RK4,
-            weights:            vec![T::from(1), T::from(2),
-                                     T::from(2), T::from(1)],
-            weight_sum:         T::from(6),
-            step:               T::from(10e-3),
-            initial_conditions: initial_conditions.clone(),
-            function:           function,
-        }
-    }
 
     /*
     Re-calculate the sum of the registered weights.
     */
-    fn sum_weights(&mut self) {
-        self.weight_sum = self.weights
+    fn sum_weights(weights: &Vec<T>) -> T {
+        weights
             .iter()
-            .fold(T::from(0), |sum, i| sum + i.clone());
+            .fold(T::zero(), |sum, i| sum + i.clone())
     }
 
     /**
@@ -73,25 +58,53 @@ impl<T, F> Solver<T, F>
     */
     fn get_default_weights_for(method: &Method) -> Vec<T> {
         match method {
-            &Method::RK2 => vec![T::from(1), T::from(1)],
+            &Method::RK2 => vec![
+                T::from_str_radix("1", 10).ok().unwrap(),
+                T::from_str_radix("1", 10).ok().unwrap()
+            ],
 
-            &Method::RK4 => vec![T::from(1), T::from(2),
-                                 T::from(2), T::from(1)],
+            &Method::RK4 => vec![
+                T::from_str_radix("1", 10).ok().unwrap(),
+                T::from_str_radix("2", 10).ok().unwrap(),
+                T::from_str_radix("2", 10).ok().unwrap(),
+                T::from_str_radix("1", 10).ok().unwrap()
+            ],
+        }
+    }
+
+    /**
+    Start building a new Solver.
+
+    Default values are:
+
+    - method: `Method::RK4`,
+    - intermidiate point weights: `vec![1, 2, 2, 1]`
+    - step size: `T::from_str_radix("10e-3", 10)`
+    */
+    pub fn new(initial_conditions: &Vec<T>, function: F) -> Solver<T, F> {
+        let weights = Self::get_default_weights_for(&Method::RK4);
+        let sum_of_weights = Self::sum_weights(&weights);
+        let default_step = T::from_str_radix("10e-3", 10).ok().unwrap();
+
+        Solver {
+            method:             Method::RK4,
+            weights:            weights,
+            weight_sum:         sum_of_weights,
+            step:               default_step,
+            initial_conditions: initial_conditions.clone(),
+            function:           function,
         }
     }
 
     /**
     Select the desired algorithm to solve the givem problem, also updating the
-    weights based on default values.
-
-    Defaults to `Method::RK4`.
-
-    To manually alter these values, please check `Self::change_weight()`.
+    weights based on default values. To manually alter these values, please
+    check `Self::change_weight()`.
     */
     pub fn method(&mut self, new_method: Method) -> &mut Solver<T, F> {
         self.weights = Self::get_default_weights_for(&new_method);
         self.method = new_method;
-        self.sum_weights();
+        self.weight_sum = Self::sum_weights(&self.weights);
 
         self
     }
@@ -101,7 +114,7 @@ impl<T, F> Solver<T, F>
     */
     pub fn change_weight(&mut self, new_weights: Vec<T>) -> &mut Solver<T, F> {
         self.weights = new_weights.clone();
-        self.sum_weights();
+        self.weight_sum = Self::sum_weights(&self.weights);
 
         self
     }
