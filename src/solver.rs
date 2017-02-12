@@ -53,23 +53,22 @@ impl<T, F> Solver<T, F>
 
     Return values are:
 
-    - `Method::RK2`: `vec![T::from(1), T::from(1)],`
-    - `Method::RK4`: `vec![T::from(1), T::from(2), T::from(2), T::from(1)],`
+    - `Method::RK2`: `vec![1, 1],`
+    - `Method::RK4`: `vec![1, 2, 2, 1],`
+
+    (Note that each internal value of the vector will be converted to `T` via
+    `T::from_str_radix()`.)
     */
     fn get_default_weights_for(method: &Method) -> Vec<T> {
-        match method {
-            &Method::RK2 => vec![
-                T::from_str_radix("1", 10).ok().unwrap(),
-                T::from_str_radix("1", 10).ok().unwrap()
-            ],
+        let weights = match method {
+            &Method::RK2 => vec!["1", "1"],
+            &Method::RK4 => vec!["1", "2", "2", "1"],
+        };
 
-            &Method::RK4 => vec![
-                T::from_str_radix("1", 10).ok().unwrap(),
-                T::from_str_radix("2", 10).ok().unwrap(),
-                T::from_str_radix("2", 10).ok().unwrap(),
-                T::from_str_radix("1", 10).ok().unwrap()
-            ],
-        }
+        weights
+            .iter()
+            .map(|el| T::from_str_radix(el, 10).ok().unwrap())
+            .collect()
     }
 
     /**
@@ -79,7 +78,9 @@ impl<T, F> Solver<T, F>
 
     - method: `Method::RK4`,
     - intermidiate point weights: `vec![1, 2, 2, 1]`
-    - step size: `T::from_str_radix("10e-3", 10)`
+    - step size: `10e-3`
+
+    (Note that these values will be converted to `T` via `T::from_str_radix()`.)
     */
     pub fn new(initial_conditions: &Vec<T>, function: F) -> Solver<T, F> {
         let weights = Self::get_default_weights_for(&Method::RK4);
