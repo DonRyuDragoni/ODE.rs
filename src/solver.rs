@@ -9,6 +9,9 @@ pub enum Method {
 
 # Default values
 
+When creating a new `Solver` with `Solver::new()`, this is the default
+configuration:
+
 - [method](struct.Solver.html#method.method): `Method::RK4`
 
 - [weights](struct.Solver.html#method.weights) for the intermediate points:
