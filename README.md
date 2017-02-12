@@ -35,7 +35,8 @@ let (times, pos) = s.run();
 
 ### For the next minor version (0.2.0)
 
-- [ ] implement the 4th order Runge-Kutta method;
+- [ ] more and better documentation;
+- [ ] re-implement the 4th order Runge-Kutta method;
 - [ ] have at least a few tests and examples;
 - [ ] stabilize the API.
 
@@ -50,6 +51,18 @@ let (times, pos) = s.run();
   - [ ] 5.
 
 ## Release Notes
+
+- 0.?.? [**WIP**]: break change
+
+    Change the Number trait to
+    use [num_traits](https://crates.io/crates/num-traits) crate, so that
+    accepted types are more consistent with what is already present in the
+    community.
+
+    To keep consistency with function names, `solver::Solver::change_weight()`
+    is now called `solver::Solver::weights()`.
+
+    Also, a bit more of documentation.
 
 - 0.1.1 [**unusable**]: break change
 
