@@ -6,6 +6,21 @@ pub enum Method {
 }
 
 /**
+
+# Default values
+
+- [method](struct.Solver.html#method.method): `Method::RK4`
+
+- [weights](struct.Solver.html#method.weights) for the intermediate points:
+
+    - `Method::RK2`: `vec![1, 1],`
+    - `Method::RK4`: `vec![1, 2, 2, 1],`
+
+(Note that each internal value of the vector will be converted to `T` via
+[T::from_str_radix()](../num_traits/trait.Num.html#tymethod.from_str_radix).)
+
+# Example
+
 ```
 use ode::{Method, Solver};
 
@@ -48,7 +63,7 @@ impl<T, F> Solver<T, F>
             .fold(T::zero(), |sum, i| sum + i.clone())
     }
 
-    /**
+    /*
     Return the default weights for the intermidiate points of a given method.
 
     Return values are:
@@ -113,7 +128,7 @@ impl<T, F> Solver<T, F>
     /**
     Modify the default weighting applyed to each intermidiate point.
     */
-    pub fn change_weight(&mut self, new_weights: Vec<T>) -> &mut Solver<T, F> {
+    pub fn weights(&mut self, new_weights: Vec<T>) -> &mut Solver<T, F> {
         self.weights = new_weights.clone();
         self.weight_sum = Self::sum_weights(&self.weights);
 
