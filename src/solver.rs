@@ -54,27 +54,45 @@ impl<T, F> Solver<T, F>
         }
     }
 
+    /*
+    Re-calculate the sum of the registered weights.
+    */
+    fn sum_weights(&mut self) {
+        self.weight_sum = self.weights
+            .iter()
+            .fold(T::from(0), |sum, i| sum + i.clone());
+    }
+
     /**
-    Select the desired algorithm to solve the givem problem, also changing the
-    weights based on the selected case:
+    Return the default weights for the intermidiate points of a given method.
+
+    Return values are:
 
     - `Method::RK2`: `vec![T::from(1), T::from(1)],`
     - `Method::RK4`: `vec![T::from(1), T::from(2), T::from(2), T::from(1)],`
+    */
+    fn get_default_weights_for(method: &Method) -> Vec<T> {
+        match method {
+            &Method::RK2 => vec![T::from(1), T::from(1)],
+
+            &Method::RK4 => vec![T::from(1), T::from(2),
+                                 T::from(2), T::from(1)],
+        }
+    }
+
+    /**
+    Select the desired algorithm to solve the givem problem, also updating the
+    weights based on default values.
 
     Defaults to `Method::RK4`.
 
     To manually alter these values, please check `Self::change_weight()`.
     */
     pub fn method(&mut self, new_method: Method) -> &mut Solver<T, F> {
-        match new_method {
-            Method::RK2 => self.weights = vec![T::from(1), T::from(1)],
-            Method::RK4 => self.weights = vec![T::from(1), T::from(2),
-                                               T::from(2), T::from(1)],
-        }
-
-        self.weight_sum = self.weights.iter()
-            .fold(T::from(0), |sum, i| sum + i.clone());
+        self.weights = Self::get_default_weights_for(&new_method);
         self.method = new_method;
+        self.sum_weights();
+
         self
     }
 
@@ -83,11 +101,7 @@ impl<T, F> Solver<T, F>
     */
     pub fn change_weight(&mut self, new_weights: Vec<T>) -> &mut Solver<T, F> {
         self.weights = new_weights.clone();
-
-        let mut sum: T = T::from(0);
-        for i in new_weights.iter() {
-            sum = sum + i.clone();
-        }
+        self.sum_weights();
 
         self
     }
