@@ -33,13 +33,13 @@ let (times, pos) = s.run();
 
 ## Current Goals
 
-For the next minor version, 0.2.0, we plan to:
+### For the next minor version (0.2.0)
 
 - [ ] implement the 4th order Runge-Kutta method;
 - [ ] have at least a few tests and examples;
 - [ ] stabilize the API.
 
-For the next major version, 1.0.0, we plan to:
+### For the next major version (1.0.0)
 
 - [ ] figure out a generic way to write all Runge-Kutta variants that is both
   easy to maintain and clean to read;
