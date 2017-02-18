@@ -1,8 +1,10 @@
 # ODE.rs
 
-[![Build Status](https://travis-ci.org/DonRyuDragoni/ODE.rs.svg?branch=master)](https://travis-ci.org/DonRyuDragoni/ODE.rs)
 [![Published Version](https://img.shields.io/crates/v/ode.svg)](https://crates.io/crates/ode)
 [![Documentation](https://docs.rs/ode/badge.svg)](https://docs.rs/ode/)
+
+[![Build Status](https://travis-ci.org/DonRyuDragoni/ODE.rs.svg?branch=master)](https://travis-ci.org/DonRyuDragoni/ODE.rs)
+[![Coverage Status](https://coveralls.io/repos/github/DonRyuDragoni/ODE.rs/badge.svg?branch=master)](https://coveralls.io/github/DonRyuDragoni/ODE.rs?branch=master)
 
 Provide generic solvers for ODEs using different methods. Also, allow the user
 to choose which datatype they desire to use for that problem, be it `f32`, `u8`
