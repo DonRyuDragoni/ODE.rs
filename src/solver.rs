@@ -1,12 +1,12 @@
+use super::rk4;
 use traits::*;
 
 pub enum Method {
-    RK2,
+    //RK2,
     RK4,
 }
 
 /**
-
 # Default values
 
 When creating a new `Solver` with `Solver::new()`, this is the default
@@ -27,36 +27,33 @@ configuration:
 ```
 use ode::{Method, Solver};
 
-let ini_cond: Vec<f32> = vec![1., 2.];
+let time_interval: [f32; 2] = [0., 100.];
+let ini_cond: Vec<f32> = vec![0.];
 
 // simple config
-Solver::new(&ini_cond, |t: &f32, _: &Vec<f32>| vec![2.*t])
+Solver::new(&time_interval, &ini_cond)
     .method(Method::RK4)
-    .run();
+    .solve(|t: &f32, _: &Vec<f32>| vec![2.*t]);
 
 // complex config
-let mut s = Solver::new(&ini_cond, |t: &f32, _: &Vec<f32>| vec![2.*t] );
+let mut s = Solver::new(&time_interval, &ini_cond);
 s.method(Method::RK4);
 
 // run the solver
-let (times, pos) = s.run();
+let (times, pos) = s.solve(|t: &f32, _: &Vec<f32>| vec![2.*t]);
 ```
 */
-pub struct Solver<T, F>
-    where T: Number,
-          F: Fn(&T, &Vec<T>) -> Vec<T> {
+pub struct Solver<T> where T: Number {
     method: Method,
     weights: Vec<T>,
     weight_sum: T,
+    time_begin: T,
+    time_end: T,
     step: T,
     initial_conditions: Vec<T>,
-    function: F,
 }
 
-impl<T, F> Solver<T, F>
-    where T: Number,
-          F: Fn(&T, &Vec<T>) -> Vec<T> {
-
+impl<T> Solver<T> where T: Number {
     /*
     Re-calculate the sum of the registered weights.
     */
@@ -79,7 +76,7 @@ impl<T, F> Solver<T, F>
     */
     fn get_default_weights_for(method: &Method) -> Vec<T> {
         let weights = match method {
-            &Method::RK2 => vec!["1", "1"],
+            //&Method::RK2 => vec!["1", "1"],
             &Method::RK4 => vec!["1", "2", "2", "1"],
         };
 
@@ -100,7 +97,8 @@ impl<T, F> Solver<T, F>
 
     (Note that these values will be converted to `T` via `T::from_str_radix()`.)
     */
-    pub fn new(initial_conditions: &Vec<T>, function: F) -> Solver<T, F> {
+    pub fn new(time_interval: &[T; 2],
+               initial_conditions: &Vec<T>) -> Solver<T> {
         let weights = Self::get_default_weights_for(&Method::RK4);
         let sum_of_weights = Self::sum_weights(&weights);
         let default_step = T::from_str_radix("10e-3", 10).ok().unwrap();
@@ -109,9 +107,10 @@ impl<T, F> Solver<T, F>
             method:             Method::RK4,
             weights:            weights,
             weight_sum:         sum_of_weights,
+            time_begin:         time_interval[0].clone(),
+            time_end:           time_interval[1].clone(),
             step:               default_step,
             initial_conditions: initial_conditions.clone(),
-            function:           function,
         }
     }
 
@@ -120,7 +119,7 @@ impl<T, F> Solver<T, F>
     weights based on default values. To manually alter these values, please
     check `Self::change_weight()`.
     */
-    pub fn method(&mut self, new_method: Method) -> &mut Solver<T, F> {
+    pub fn method(&mut self, new_method: Method) -> &mut Solver<T> {
         self.weights = Self::get_default_weights_for(&new_method);
         self.method = new_method;
         self.weight_sum = Self::sum_weights(&self.weights);
@@ -131,7 +130,7 @@ impl<T, F> Solver<T, F>
     /**
     Modify the default weighting applyed to each intermidiate point.
     */
-    pub fn weights(&mut self, new_weights: Vec<T>) -> &mut Solver<T, F> {
+    pub fn weights(&mut self, new_weights: Vec<T>) -> &mut Solver<T> {
         self.weights = new_weights.clone();
         self.weight_sum = Self::sum_weights(&self.weights);
 
@@ -154,7 +153,7 @@ impl<T, F> Solver<T, F>
     */
     pub fn validate(&self) -> bool {
         self.weights.len() == match self.method {
-            Method::RK2 => 2,
+            //Method::RK2 => 2,
             Method::RK4 => 4,
         }
     }
@@ -166,10 +165,19 @@ impl<T, F> Solver<T, F>
     calling `Self::validate()` within an `assert!`. See that function for more
     details.
     */
-    pub fn run(&self) -> (Vec<T>, Vec<Vec<T>>) {
+    pub fn solve<F>(&self, function: F) -> (Vec<T>, Vec<Vec<T>>)
+        where F: Function<T> {
         assert!(self.validate());
 
-        (Vec::new(), Vec::new())
+        match self.method {
+            //Method::RK2 => {}
+            Method::RK4 => rk4::solver(function,
+                                       self.initial_conditions.clone(),
+                                       &[self.time_begin, self.time_end],
+                                       self.step,
+                                       &self.weights,
+                                       self.weight_sum)
+        }
     }
 }
 
@@ -178,9 +186,7 @@ mod tests {
     use super::*;
     #[test]
     fn it_works() {
-        let _ = Solver::new(&vec![0., 0.],
-                            |t: &f32, _: &Vec<f32>| -> Vec<f32> {
-                                vec![2.*t]
-                            });
+        let _ = Solver::new(&[0., 100.],
+                            &vec![0., 0.]);
     }
 }
