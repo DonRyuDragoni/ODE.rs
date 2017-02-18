@@ -1,6 +1,6 @@
 [package]
 name = "ode"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["DonRyuDragoni <dragoni.ryu@gmail.com>"]
 description = "Various solvers for ODEs"
 repository = "https://github.com/DonRyuDragoni/ODE.rs"
