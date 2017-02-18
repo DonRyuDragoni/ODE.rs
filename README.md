@@ -16,19 +16,20 @@ be cleaned and there is a lot yet to be implemented.
 ```rust
 use ode::{Method, Solver};
 
-let ini_cond: Vec<f32> = vec![1., 2.];
+let time_interval: [f32; 2] = [0., 100.];
+let ini_cond: Vec<f32> = vec![0.];
 
 // simple config
-Solver::new(&ini_cond, |t: &f32, _: &Vec<f32>| vec![2.*t])
+Solver::new(&time_interval, &ini_cond)
     .method(Method::RK4)
-    .run();
+    .solve(|t: &f32, _: &Vec<f32>| vec![2.*t]);
 
 // complex config
-let mut s = Solver::new(&ini_cond, |t: &f32, _: &Vec<f32>| vec![2.*t] );
+let mut s = Solver::new(&time_interval, &ini_cond);
 s.method(Method::RK4);
 
 // run the solver
-let (times, pos) = s.run();
+let (times, pos) = s.solve(|t: &f32, _: &Vec<f32>| vec![2.*t]);
 ```
 
 ## Current Goals
