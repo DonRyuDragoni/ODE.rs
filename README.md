@@ -8,7 +8,7 @@
 
 Provide generic solvers for ODEs using different methods. Also, allow the user
 to choose which datatype they desire to use for that problem, be it `f32`, `u8`
-or some non-standard bignum type..
+or some non-standard bignum type.
 
 By no means this is yet ready for any serious use right now. The code needs to
 be cleaned and there is a lot yet to be implemented.
