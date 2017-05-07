@@ -28,7 +28,7 @@ need to reproduce the problem, and, if relevant, come up with a unit test, so
 this issue won't come again in the future.
 
 After submitting the issue, if you want to solve it yourself, please, feel free
-to submit a pull request. More on this in the [Solving Issues](#Solving Issues)
+to submit a pull request. More on this in the [Solving Issues](#Solving issues)
 section bellow.
 
 ## Solving issues
