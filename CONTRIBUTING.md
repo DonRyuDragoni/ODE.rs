@@ -11,7 +11,7 @@ changes or other examples. So meta!)
 So, you found a bug in the code and either you know how to fix it or want
 someone to work on it.
 
-The first thing you should do is try to come up with a (MWE)[] that demonstrates
+The first thing you should do is try to come up with a [MWE][] that demonstrates
 the issue. After all, you could be working on a large codebase as far as I know,
 and checking thousands of lines of code would be impractical for me.
 
@@ -23,12 +23,12 @@ mind: I'm not an expert in anything, you may have to teach me a thing or two).
 While you're at it, please recheck your math and make sure that my code is
 the one doing the wrong thing.
 
-Finally, submit an issue here on GitHub, containing all the needed details I
-need to reproduce the problem, and, if relevant, come up with a unit test, so
-this issue won't come again in the future.
+Finally, submit an issue here on GitHub, making sure to report all the needed
+details to reproduce the problem (and, if relevant and possible, come up with a
+unit test, so this issue won't come again in the future).
 
 After submitting the issue, if you want to solve it yourself, please, feel free
-to submit a pull request. More on this in the [Solving Issues](#Solving issues)
+to submit a pull request. More on this in the [Solving Issues](#solving-issues)
 section bellow.
 
 ## Solving issues

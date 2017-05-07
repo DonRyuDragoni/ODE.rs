@@ -53,7 +53,7 @@ let (times, pos) = s.solve(|t: &f32, _: &Vec<f32>| vec![2.*t]);
   - [x] 4;
   - [ ] 5.
 
-## [Release Notes](./Release_Notes.md)
+## [Release Notes](./Release%20Notes.md)
 
 ## [Contributing](./CONTRIBUTING.md)
 
