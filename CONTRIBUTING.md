@@ -2,14 +2,13 @@
 
 So, you want to help this project. Good news, you: I need help here!
 
-There are lots of ways you help, and here are some examples and
-guidelines. (Note: you're also welcome to contribute to this file, proposing
-changes or other examples. So meta!)
+There are lots of ways you help, and here are some examples and guidelines; take
+them more as suggestions than required steps, though. (Note: you're also welcome
+to contribute to this file, proposing changes or other examples. So meta!)
 
 ## Finding bugs
 
-So, you found a bug in the code and either you know how to fix it or want
-someone to work on it.
+Found a bug in the code you want fixed? Sure, let's get into it!
 
 The first thing you should do is try to come up with a [MWE][] that demonstrates
 the issue. After all, you could be working on a large codebase as far as I know,
@@ -31,8 +30,22 @@ After submitting the issue, if you want to solve it yourself, please, feel free
 to submit a pull request. More on this in the [Solving Issues](#solving-issues)
 section bellow.
 
+## Proposing changes and requesting features
+
+Had an idea to improve usability, performance or documentation? Want to talk
+about a feature you wish was implemented? Go on, file an
+issue [here][project issue tracker].
+
+[project issue tracker]: https://github.com/DonRyuDragoni/ODE.rs/issues
+
+I may need to ask you a few things before working on it, and we may have to
+discuss what would that change affect, but worry not: I'm not that bad of a
+person to talk to, once you get used to my mumblings that is.
+
+And remember: breaking changes are allowed to happen *in major releases only*
+(and in the 0.x series, but that's a special case), so your idea may need to be
+delayed.
+
 ## Solving issues
 
-## Proposing changes
-
-So, you just had a great idea to improve usability
+Found an issue you want to work on? Great! Let's get to work!
