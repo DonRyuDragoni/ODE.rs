@@ -103,7 +103,7 @@ impl<T> Solver<T> where T: Number {
         let sum_of_weights = Self::sum_weights(&weights);
         let default_step = T::from_str_radix("10e-3", 10).ok().unwrap();
 
-        Solver {
+        Self {
             method:             Method::RK4,
             weights:            weights,
             weight_sum:         sum_of_weights,
