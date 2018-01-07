@@ -18,20 +18,27 @@ be cleaned and there is a lot yet to be implemented.
 ```rust
 use ode::{Method, Solver};
 
+// The interval in time you wish to calculate.
 let time_interval: [f32; 2] = [0., 100.];
-let ini_cond: Vec<f32> = vec![0.];
 
-// simple config
-Solver::new(&time_interval, &ini_cond)
-    .method(Method::RK4)
-    .solve(|t: &f32, _: &Vec<f32>| vec![2.*t]);
+// The value of y(t = 0).
+let initial_condition: Vec<f32> = vec![0.];
 
-// complex config
-let mut s = Solver::new(&time_interval, &ini_cond);
-s.method(Method::RK4);
+// You can configure the solver in a single line:
+let _ = Solver::new(&time_interval, &initial_condition)
+    .method(Method::RK4);
 
-// run the solver
-let (times, pos) = s.solve(|t: &f32, _: &Vec<f32>| vec![2.*t]);
+// Or with multiple statements:
+let mut solver = Solver::new(&time_interval, &initial_condition);
+solver.method(Method::RK4);
+
+// To run the solver, simply pass the closure of your choice. In this case, I'm
+// integrating
+//
+//     y(t) = 2 * t
+let (times, pos) = solver.solve(|t: &f32, _: &Vec<f32>| {
+    vec![2.*t]
+});
 ```
 
 ## Current Goals

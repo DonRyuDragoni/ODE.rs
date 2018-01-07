@@ -180,13 +180,3 @@ impl<T> Solver<T> where T: Number {
         }
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    #[test]
-    fn it_works() {
-        let _ = Solver::new(&[0., 100.],
-                            &vec![0., 0.]);
-    }
-}

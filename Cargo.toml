@@ -1,11 +1,14 @@
 [package]
-name = "ode"
-version = "0.1.2"
-authors = ["DonRyuDragoni <dragoni.ryu@gmail.com>"]
+name        = "ode"
+version     = "0.1.2"
+authors     = ["DonRyuDragoni <dragoni.ryu@gmail.com>"]
 description = "Various solvers for ODEs"
-repository = "https://github.com/DonRyuDragoni/ODE.rs"
-readme = "README.md"
-license = "MIT"
+repository  = "https://github.com/DonRyuDragoni/ODE.rs"
+readme      = "README.md"
+license     = "MIT"
 
 [dependencies]
 num-traits = "0.1.36"
+
+[dev-dependencies]
+version-sync = "0.5"
