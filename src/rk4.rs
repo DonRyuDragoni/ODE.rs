@@ -1,25 +1,27 @@
 use super::traits::{Function, Number};
 
 /**
-Solves `func` using the 4th order Runge-Kutta algorithm.
-
-The solver returns two vectors, containing the times used in each step of the
-algorithm and the respectful values for that time.
-*/
-pub fn solver<T, F>(func: F,
-                    initial_conditions: Vec<T>,
-                    time_interval: &[T; 2],
-                    step: T,
-                    weights: &Vec<T>,
-                    weight_sum: T)
-                 -> (Vec<T>, Vec<Vec<T>>)
-    where T: Number,
-          F: Function<T> {
-
+ * Solves `func` using the 4th order Runge-Kutta algorithm.
+ *
+ * The solver returns two vectors, containing the times used in each step of the
+ * algorithm and the respectful values for that time.
+ */
+pub fn solver<T, F>(
+    func: F,
+    initial_conditions: Vec<T>,
+    time_interval: &[T; 2],
+    step: T,
+    weights: &Vec<T>,
+    weight_sum: T,
+) -> (Vec<T>, Vec<Vec<T>>)
+where
+    T: Number,
+    F: Function<T>,
+{
     // values to be returned
     let mut time_stamps: Vec<T> = vec![time_interval[0]];
-    let mut calculated_vals: Vec<Vec<T>> = Vec::with_capacity(
-        initial_conditions.len());
+    let mut calculated_vals: Vec<Vec<T>> =
+        Vec::with_capacity(initial_conditions.len());
 
     for i in 0..initial_conditions.len() {
         calculated_vals.push(vec![]);
@@ -45,10 +47,10 @@ pub fn solver<T, F>(func: F,
         let mut currvls_k2 = current_vals.clone();
 
         for i in 0..currvls_k2.len() {
-            currvls_k2[i] = currvls_k2[i] + k1[i]/t_2;
+            currvls_k2[i] = currvls_k2[i] + k1[i] / t_2;
         }
 
-        let mut k2: Vec<T> = func(&(current_time + step/t_2), &currvls_k2);
+        let mut k2: Vec<T> = func(&(current_time + step / t_2), &currvls_k2);
 
         for i in 0..k2.len() {
             k2[i] = k2[i] * step;
@@ -57,10 +59,10 @@ pub fn solver<T, F>(func: F,
         // k3 = dt * func(t + dt/2, x + k2/2)
         let mut currvls_k3 = current_vals.clone();
         for i in 0..currvls_k3.len() {
-            currvls_k3[i] = currvls_k3[i] + k2[i]/t_2;
+            currvls_k3[i] = currvls_k3[i] + k2[i] / t_2;
         }
 
-        let mut k3: Vec<T> = func(&(current_time + step/t_2), &currvls_k3);
+        let mut k3: Vec<T> = func(&(current_time + step / t_2), &currvls_k3);
 
         for i in 0..k3.len() {
             k3[i] = k3[i] * step;
@@ -86,10 +88,11 @@ pub fn solver<T, F>(func: F,
         let mut curr_point = current_vals.clone();
 
         for i in 0..curr_point.len() {
-            curr_point[i] = curr_point[i] + step*(
-                k1[i]*weights[0] + k2[i]*weights[1] + k3[i]*weights[2]
-                    + k4[i]*weights[3]
-            )/weight_sum;
+            curr_point[i] = curr_point[i]
+                + step
+                    * (k1[i] * weights[0] + k2[i] * weights[1]
+                        + k3[i] * weights[2]
+                        + k4[i] * weights[3]) / weight_sum;
         }
 
         // update values for the next iteration
@@ -119,29 +122,31 @@ mod tests {
     use super::solver;
 
     /*
-    Consider the ODE:
-
-        y'(t) = 2*t
-
-    The analitical solution is
-
-        y(t) = t^2 + c
-    */
+     * Consider the ODE:
+     *
+     *     y'(t) = 2*t
+     *
+     * The analitical solution is
+     *
+     *     y(t) = t^2 + c
+     */
     #[test]
     fn integrate_2_t() {
-        let start =   0;
-        let end   = 500;
+        let start = 0;
+        let end = 500;
 
-        let (_, num_sol) = solver(|t: &f32, _: &Vec<f32>| vec![2.*t],
-                                  vec![0.],
-                                  &[start as f32, end as f32],
-                                  1.0,
-                                  &vec![1., 2., 2., 1.],
-                                  6.);
+        let (_, num_sol) = solver(
+            |t: &f32, _: &Vec<f32>| vec![2. * t],
+            vec![0.],
+            &[start as f32, end as f32],
+            1.0,
+            &vec![1., 2., 2., 1.],
+            6.,
+        );
 
         let mut an_sol: Vec<u32> = vec![];
         for i in start..end {
-            an_sol.push(i*i);
+            an_sol.push(i * i);
         }
 
         // to compare the results, we need to convert the numerical solution to
